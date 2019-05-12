@@ -1,10 +1,11 @@
 # main_mesh.py
 
 import array_queue as AQ
-import mesh_graphics3 as MG
+import mesh_graphics3 as MG      # Bunch of commented out test plots
 import file_reader as FR
-import part_mover as PM
-import part_mover2 as PM2
+import particle_mover_multi as PM
+#    import mesh_animate_record as MAR   # These are incompatible
+#    import mesh_animate3 as MA          # So are loaded by if else below
 
 import datetime, os, sys, time
 import numpy as np
@@ -62,7 +63,7 @@ else:
     lonlatbox=(-76.6,38.2,-76.1,39.2)    # Too Big box near Potomac
     lonlatbox=(-76.4,36.8,-75.9,37.5)    # Too Big Box near Mouth
     #lonlatbox=(-76.55,36.8,-75.9,39.2)    # Really Big Box from Mouth to Potomac
-    p,pcolors,numparticles=MG.plot_box_pick(100,200,lonlatbox) 
+    p,pcolors,numparticles=MG.plot_box_pick(10,20,lonlatbox) 
     #p,pcolors,numparticles=MG.plot_box_pick(100,200,lonlatbox) # 164 sec 2000x216X1800sec
 
 
@@ -107,13 +108,9 @@ print('U24,V24[3][250]',U24[3][250],V24[3][250])
 # p[:numparticles, :0,1 X,Y]
 print(' Loop {0} times \n particles={1}'.format(numtimescalc,np.shape(p)))
 
-if DEBUG:
-    t1=time.time()
-    pp,timep= PM.loop_updates(xmesh,U24,V24,Time24,p,dt,numtimescalc,numtimesprint,dpinterval)
-    print('Linear time loop updates',time.time()-t1)
 
 t1=time.time()
-pp,ppcolors,timep= PM2.queue_pp_calculationloop(p,pcolors,xmesh,U24,V24,Time24,dt,numtimescalc,numtimesprint,dpinterval)
+pp,ppcolors,timep= PM.queue_pp_calculationloop(p,pcolors,xmesh,U24,V24,Time24,dt,numtimescalc,numtimesprint,dpinterval)
 print('Parallel time loop updates',time.time()-t1)
 
 #print('shape(pp)={0},\n pp={1}\n'.format(np.shape(pp),pp))
