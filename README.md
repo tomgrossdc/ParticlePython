@@ -1,6 +1,8 @@
 # ParticlePython
 Netcdf Python Particle tracker with Multiprocessor and Animations
+Runs with AMD Ryzen 7 2700x using all 8 processors.
 Does particle tracking in Chesapeake Bay using NOAA netcdf files. 
+
 Missing from the project are those data files. They may be downloaded with the 
 crontab tab job, whose files are included in the CRONTAB directory.
 The ROMS_REGULAR are ROMS runs which have been meshed to fixed box mesh for 
@@ -15,6 +17,7 @@ Either select a small batch of particles ByHand or generates a box of particles 
 Specify the lonlatbox and numx numy of particles. 
 200, 100 have worked nicely and runs in about two minutes for five days of simulation.
 Output is an animation of particles moving, either on screen or the GRAPHrecord=True generates ches.mp4
+
 Options:  
 s_rho = 0    Top layer of particles
 ModelType="ROMS_REGULAR"
