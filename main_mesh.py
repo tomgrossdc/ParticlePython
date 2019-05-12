@@ -18,7 +18,8 @@ DEBUG=False
 # from starttime, lasttime  create list of file names
 
 # Layer to pick from the netcdf files
-# ROMS_REGULAR is 0-top   15-bottom
+# ROMS_REGULAR is 0-top   15-deepest,
+# If depth is less than depth(s_rho), U=0
 s_rho=0
 
 ModelType="ROMS_REGULAR"
@@ -111,7 +112,7 @@ print(' Loop {0} times \n particles={1}'.format(numtimescalc,np.shape(p)))
 
 t1=time.time()
 pp,ppcolors,timep= PM.queue_pp_calculationloop(p,pcolors,xmesh,U24,V24,Time24,dt,numtimescalc,numtimesprint,dpinterval)
-print('Parallel time loop updates',time.time()-t1)
+print('Parallel time loop updates',time.time()-t1, "seconds")
 
 #print('shape(pp)={0},\n pp={1}\n'.format(np.shape(pp),pp))
 
@@ -119,9 +120,9 @@ print('Parallel time loop updates',time.time()-t1)
 #MG.plot_particles(xmesh,pp,pcolors)
 
 #MG.plot_particles_spots(xmesh,pp,pcolors)
-print("timep[3]-",timep[3])
+#print("timep[3]-",timep[3])
 
-GRAPHrecord=True
+GRAPHrecord=False
 if GRAPHrecord :
     import mesh_animate_record as MAR
     manim=MAR.mesh_animate((-76.6,36.2,-75.6,37.6))  # (-76.6,36.2,-75.6,37.6)
