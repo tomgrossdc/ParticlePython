@@ -31,12 +31,14 @@ def ReadOptions():
     file1.readline()  # 
     lonlatbox=[float(i) for i in file1.readline()[:-1].split(',')]
     file1.readline()  # 
+    lonlatgraphicbox=[float(i) for i in file1.readline()[:-1].split(',')]
+    file1.readline()  # 
     nxny=[int(i) for i in file1.readline()[:-1].split(',')]
     file1.readline()  # 
     GRAPHrecord= bool(file1.readline()[:-1]=='True')
     
     file1.close()
-    return DEBUG,s_rho,ModelType,date_start,date_end,dt,dpsave,dirroot,ByHand,lonlatbox,nxny,GRAPHrecord
+    return DEBUG,s_rho,ModelType,date_start,date_end,dt,dpsave,dirroot,ByHand,lonlatbox,lonlatgraphicbox,nxny,GRAPHrecord
 
 
 def BuildFileList(dirroot,ModelType,datestart,dateend):

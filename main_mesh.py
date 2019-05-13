@@ -26,8 +26,9 @@ dpsave =L[6]
 dirroot =L[7]
 ByHand =L[8]
 lonlatbox =L[9]
-nxny =L[10]
-GRAPHrecord=L[11]
+lonlatgraphicbox =L[10]
+nxny =L[11]
+GRAPHrecord=L[12]
 
 # from starttime, lasttime  create list of file names
 
@@ -136,9 +137,10 @@ print('Parallel time loop updates',time.time()-t1, "seconds")
 #MG.plot_particles_spots(xmesh,pp,pcolors)
 #print("timep[3]-",timep[3])
 
+# lonlatgraphicbox=(-76.6,36.2,-75.6,37.6)
 if GRAPHrecord :
     import mesh_animate_record as MAR
-    manim=MAR.mesh_animate((-76.6,36.2,-75.6,37.6))  # (-76.6,36.2,-75.6,37.6)
+    manim=MAR.mesh_animate(lonlatgraphicbox)  # (-76.6,36.2,-75.6,37.6)
     #manim.get_particles_time()
     if DEBUG:
         snps = len(pcolors)
@@ -149,7 +151,7 @@ if GRAPHrecord :
     #manim.run_animation(False,100)
 else:
     import mesh_animate3 as MA
-    manim=MA.mesh_animate((-76.6,36.2,-75.6,37.6))   # (-76.6,36.4,-75.5,38.0)
+    manim=MA.mesh_animate(lonlatgraphicbox)   # (-76.6,36.4,-75.5,38.0)
     #manim.get_particles_time()
     if DEBUG:
         snps = len(pcolors)
