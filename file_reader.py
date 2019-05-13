@@ -6,6 +6,38 @@ import numpy as np
 import os, sys
 from netCDF4 import Dataset
 
+def ReadOptions():
+    filename="/home/tom/code/ThreadParticle/Git20190512/ParticlePython/Particle_Options.txt"
+    file1 = open(filename,"r")
+    # all data is returned as text so many conversions needed
+    file1.readline()  # DEBUG
+    DEBUG= bool(file1.readline()[:-1]=='True')
+    file1.readline()  # 
+    s_rho = int(file1.readline()[:-1])
+    file1.readline()  # 
+    ModelType = file1.readline()[:-1]
+    file1.readline()  # 
+    date_start=[int(i) for i in file1.readline()[:-1].split(',')]
+    file1.readline()  # 
+    date_end=[int(i) for i in file1.readline()[:-1].split(',')]
+    file1.readline()  # 
+    dt = float(file1.readline()[:-1])
+    file1.readline()  # 
+    dpsave = float(file1.readline()[:-1])
+    file1.readline()  # 
+    dirroot = file1.readline()[:-1]
+    file1.readline()  # 
+    ByHand= bool(file1.readline()[:-1]=='True')
+    file1.readline()  # 
+    lonlatbox=[float(i) for i in file1.readline()[:-1].split(',')]
+    file1.readline()  # 
+    nxny=[int(i) for i in file1.readline()[:-1].split(',')]
+    file1.readline()  # 
+    GRAPHrecord= bool(file1.readline()[:-1]=='True')
+    
+    file1.close()
+    return DEBUG,s_rho,ModelType,date_start,date_end,dt,dpsave,dirroot,ByHand,lonlatbox,nxny,GRAPHrecord
+
 
 def BuildFileList(dirroot,ModelType,datestart,dateend):
     # datestart and dateend are objects from datetime

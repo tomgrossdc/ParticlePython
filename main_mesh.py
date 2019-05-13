@@ -13,22 +13,36 @@ import matplotlib.pyplot as plt
 
 #from mesh_graphics3 import plot_velocities, plot_mesh, plot_initialize
 
-DEBUG=False
+
+L = FR.ReadOptions()
+print("L",L)
+DEBUG=L[0]
+s_rho=L[1]
+ModelType=L[2]
+date_start =L[3]
+date_end =L[4]
+dt =L[5]
+dpsave =L[6]
+dirroot =L[7]
+ByHand =L[8]
+lonlatbox =L[9]
+nxny =L[10]
+GRAPHrecord=L[11]
 
 # from starttime, lasttime  create list of file names
 
 # Layer to pick from the netcdf files
 # ROMS_REGULAR is 0-top   15-deepest,
 # If depth is less than depth(s_rho), U=0
-s_rho=0
+#s_rho=0
 
-ModelType="ROMS_REGULAR"
-datestart=datetime.datetime(2019,2,1,1,0)
-dateend = datetime.datetime(2019,2,7,12,0)
+#ModelType="ROMS_REGULAR"
+datestart=datetime.datetime(*date_start)
+dateend = datetime.datetime(*date_end)
 timespan=dateend-datestart             # datetime construct for differences
 timespansec=timespan.total_seconds()   #  real seconds
-dt = 120.  # seconds per calculation time step
-dpsave = 1800. # seconds per particle position save
+#dt = 120.  # seconds per calculation time step
+#dpsave = 1800. # seconds per particle position save
 numtimescalc=int(timespansec/dt)
 numtimesprint=int(timespansec/dpsave)
 dpinterval = int(dpsave/dt +.01)
@@ -37,7 +51,7 @@ print(" Timings:\n Duration(sec)={0}\n dt={1}  dpsave={2}\n numtimescalc={3}, nu
 
 
       
-dirroot="/media/tom/MyBookAllLinux/NOSnetcdf"
+#dirroot="/media/tom/MyBookAllLinux/NOSnetcdf"
 filedirectories, filenames=FR.BuildFileList(dirroot,ModelType,datestart,dateend)
 print("BuildFileList says",filedirectories[0])
 print("BuildFileList says",filenames[0])
@@ -50,21 +64,21 @@ xmesh,ymesh,amesh=AQ.array_queue(nclfilename)
 MG.plot_initialize()
 
 #p = MG.plot_mesh_pick_line(xmesh,numtimes)
-ByHand=False
+#ByHand=False
 if ByHand:
     p,numparticles = MG.plot_mesh_pick_line2(xmesh,numtimesprint)
     print("p {0}, numparticles={1}\n".format(np.shape(p),numparticles),p[:,:])
 else:
-    lonlatbox=(-76.04,36.95,-76.005,37.15)  # Just inside Mouth slender tall
-    lonlatbox=(-76.20,36.95,-76.005,37.15)  # Just inside Mouth big box
+    #lonlatbox=(-76.04,36.95,-76.005,37.15)  # Just inside Mouth slender tall
+    #lonlatbox=(-76.20,36.95,-76.005,37.15)  # Just inside Mouth big box
     #lonlatbox=(-76.16,37.59,-76.08,37.64)
     #lonlatbox=(-76.46,38.67,-76.40,38.73)
     #lonlatbox=(-76.51,38.67,-76.36,38.73)   # long box near annapolis
     #lonlatbox=(-76.43,38.70,-76.40,38.73)
-    lonlatbox=(-76.6,38.2,-76.1,39.2)    # Too Big box near Potomac
-    lonlatbox=(-76.4,36.8,-75.9,37.5)    # Too Big Box near Mouth
+    #lonlatbox=(-76.6,38.2,-76.1,39.2)    # Too Big box near Potomac
+    #lonlatbox=(-76.4,36.8,-75.9,37.5)    # Too Big Box near Mouth
     #lonlatbox=(-76.55,36.8,-75.9,39.2)    # Really Big Box from Mouth to Potomac
-    p,pcolors,numparticles=MG.plot_box_pick(10,20,lonlatbox) 
+    p,pcolors,numparticles=MG.plot_box_pick(nxny[0],nxny[1],lonlatbox) 
     #p,pcolors,numparticles=MG.plot_box_pick(100,200,lonlatbox) # 164 sec 2000x216X1800sec
 
 
@@ -122,7 +136,6 @@ print('Parallel time loop updates',time.time()-t1, "seconds")
 #MG.plot_particles_spots(xmesh,pp,pcolors)
 #print("timep[3]-",timep[3])
 
-GRAPHrecord=False
 if GRAPHrecord :
     import mesh_animate_record as MAR
     manim=MAR.mesh_animate((-76.6,36.2,-75.6,37.6))  # (-76.6,36.2,-75.6,37.6)
