@@ -11,7 +11,7 @@ There are six hourly real ROMS files. Will make sure the programme will work wit
 do find some proper hourly files.
 
 python3 main_mesh.py   will run the main program. 
-Options are hardwired inside the code. They should be moved to an input file and read at start of main_mesh.py
+Options are read from an input file Particle_Options.txt from file_reader.py
 Need to specify start time, end time, directory with files. 
 Either select a small batch of particles ByHand or generates a box of particles in lonlatbox
 Specify the lonlatbox and numx numy of particles. 
@@ -21,15 +21,15 @@ Output is an animation of particles moving, either on screen or the GRAPHrecord=
 Options:  
 s_rho = 0    Top layer of particles
 ModelType="ROMS_REGULAR"
-datestart=(2019,2,1,1,0)
-dateend= (2019,2,7,12,0)
+datestart=2019,2,1,1,0
+dateend= 2019,2,7,12,0
 dt=120.        Time step, seconds
 dpsave=1800.   Time step to record
 dirroot = "/media/tom/MyBookAllLinux/NOSnetcdf"
-ByHand = True
+ByHand == True
   Interactive screen position of particles
-  ==False
-  lonlatbox=(-76.4,36.8,-75.9,37.5)    # Big Box near Mouth
-  nx, ny = 100,200  or maybe 10,20 for faster runs
+else ==False
+  lonlatbox=-76.4,36.8,-75.9,37.5    # Big Box near Mouth
+  nxny = 100,200  or maybe 10,20 for faster runs
 GRAPHrecord = False   plot graphic animation to screen
-==True record graphic animation to mp4 file.
+else ==True record graphic animation to mp4 file.
