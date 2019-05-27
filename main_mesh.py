@@ -60,14 +60,14 @@ print("BuildFileList says",filenames[0])
 nclfilename=os.path.join(filedirectories[0],filenames[0])
 
 # Read the first netcdf file, pull out mesh data, triangulate and prepare meshes
-xmesh,ymesh,amesh=AQ.array_queue(nclfilename)
+xmesh,ymesh,amesh,wmesh=AQ.array_queue(nclfilename,ModelType)
 
 MG.plot_initialize()
 
 #p = MG.plot_mesh_pick_line(xmesh,numtimes)
 #ByHand=False
 if ByHand:
-    p,numparticles = MG.plot_mesh_pick_line2(xmesh,numtimesprint)
+    p,pcolors,numparticles = MG.plot_mesh_pick_line2(xmesh,numtimesprint)
     print("p {0}, numparticles={1}\n".format(np.shape(p),numparticles),p[:,:])
 else:
     #lonlatbox=(-76.04,36.95,-76.005,37.15)  # Just inside Mouth slender tall
@@ -105,7 +105,7 @@ else:
 timefirst=time.time()
 ifilemax=len(filenames) 
 fileindex=range(0,ifilemax)
-U24,V24,Time24 = FR.UV24(filedirectories,filenames,fileindex,xmesh,s_rho)
+U24,V24,Time24 = FR.UV24(filedirectories,filenames,fileindex,xmesh,ymesh,s_rho)
 
 """import matplotlib.pyplot as plt
 plt.plot(U24[4])
@@ -126,7 +126,7 @@ print(' Loop {0} times \n particles={1}'.format(numtimescalc,np.shape(p)))
 
 
 t1=time.time()
-pp,ppcolors,timep= PM.queue_pp_calculationloop(p,pcolors,xmesh,U24,V24,Time24,dt,numtimescalc,numtimesprint,dpinterval)
+pp,ppcolors,timep= PM.queue_pp_calculationloop(p,pcolors,xmesh,ymesh,amesh,U24,V24,Time24,dt,numtimescalc,numtimesprint,dpinterval)
 print('Parallel time loop updates',time.time()-t1, "seconds")
 
 #print('shape(pp)={0},\n pp={1}\n'.format(np.shape(pp),pp))

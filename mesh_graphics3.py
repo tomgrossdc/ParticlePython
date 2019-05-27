@@ -148,7 +148,7 @@ def plot_mesh(xmesh, ymesh):
     #plt.plot(xmesh.nodes[:,0], xmesh.nodes[:,1], '.', color='red')
 
     #plt.triplot(ymesh.nodes[:,0], ymesh.nodes[:,1], ymesh.tri.simplices, color='yellow')
-    plt.triplot(ymesh.nodes[:,0], ymesh.nodes[:,1], ymesh.triwater, color='blue')
+    plt.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.triwater, color='blue')
     #plt.plot(ymesh.nodes[:,0], ymesh.nodes[:,1], '.', color='orange')
 
     #plt.plot(p[:,0],p[:,1],'+')

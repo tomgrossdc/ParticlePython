@@ -89,9 +89,11 @@ class mesh_animate(object):
     def run_animation(self,xmesh=False,setinterval=10):
 
         if xmesh:
-            #plt.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.triwater, color=(.5,.5,1,.5))
+            plt.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.triwater, color=(.5,.5,1,.5))
+            #plt.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.tri.simplices, color=(.5,.5,1,.5))
             Coast=np.argwhere(xmesh.mask==10)
-            plt.plot(xmesh.lon[Coast],xmesh.lat[Coast],'k.',markersize=3)
+            #Coast=np.argwhere(xmesh.mask==0)
+            #plt.plot(xmesh.lon[Coast],xmesh.lat[Coast],'k.',markersize=3)
             self.ax.set_xlim(self.lonlatbox[0],self.lonlatbox[2])
             self.ax.set_ylim(self.lonlatbox[1],self.lonlatbox[3])
         else:

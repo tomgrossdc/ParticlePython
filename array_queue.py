@@ -24,29 +24,39 @@ import multiprocessing as mp
 
 # create mesh objects with self.lon, lat, mask
 class xyarray(object):
-    def __init__(self,lon,lat,mask,DataType):
+    def __init__(self,lon,lat,mask,DataType,ModelType='ROMS_REGULAR'):
+        # or ROMS_FIELDS  DataType= U V W ANGLE
         self.lon = lon
         self.lat = lat
         self.mask = mask
         self.DataType = DataType
-        self.ModelType='ROMS_REGULAR'
+        self.ModelType=ModelType
         self.s_rho = 0
 
     def reshape_mesh(self):
         self.dx=self.lon[2][3]-self.lon[2][2]
         self.dy=self.lat[3][2]-self.lat[2][2]
-        for i in range(25000000):   # one second for 25 million multiplications / processor
-            x=i*i
+        #for i in range(25000000):   # one second for 25 million multiplications / processor
+        #    x=i*i
         print(" lon, lat shapes ",self.lon.shape,self.lat.shape, self.DataType)
         print(" dx,dy ",self.dx,self.dy)
         #time.sleep(5)
 
 # finds coast and reshapes to 1D array
         print("old mask reshape ",self.mask.shape[0]*self.mask.shape[1] )
-        self.mask_fix2()
-        #self.mask_fix()
-        #self.mask = self.mask.reshape(self.mask.shape[0]*self.mask.shape[1])
 
+        #numpy gradient method for mask on coast
+        if self.ModelType == 'ROMS_REGULAR':
+            self.mask_fix2()
+
+        # Inefficient i,j differences
+        #self.mask_fix()
+
+        # No coast locations at all
+        if self.ModelType == 'ROMS_FIELDS':
+            self.mask = self.mask.reshape(self.mask.shape[0]*self.mask.shape[1])
+            #self.mask=np.ones(self.mask.shape)
+            
         self.lon = self.lon.reshape(self.lon.shape[0]*self.lon.shape[1])
         self.lat = self.lat.reshape(self.lat.shape[0]*self.lat.shape[1])
         print("shapes ",self.lat.shape,"mask",np.shape(self.mask))
@@ -128,6 +138,10 @@ class xyarray(object):
 
 
     def triangulate(self):
+        #New Triangulate Fields
+        #Read in file of outside of grid points
+        #Remove all triangles containing those points from tri.simplices
+        
         DEBUG=True
         print("triangulate ",self.ModelType,self.DataType)
     # call Delaunay triangulation to return
@@ -153,7 +167,8 @@ class xyarray(object):
             X=self.nodes[N,0]
             Y=self.nodes[N,1]
             # WHY is this test inserted with "not",  temp change to disconnect
-            if  (self.ModelType=="ROMS_REGULAR"):
+            #if  (self.ModelType=="ROMS_REGULAR"):
+            if  True:
                 d=max(X[0]*Y[1]+X[1]*Y[2]+X[2]*Y[0] - X[0]*Y[2]-X[1]*Y[0]-X[2]*Y[1], .000001)
                 self.a[ii,0]=(Y[1]-Y[2])/d
                 self.b[ii,0]=(X[2]-X[1])/d
@@ -170,7 +185,7 @@ class xyarray(object):
             d2=(X[1]-X[2])**2 + (Y[1]-Y[2])**2
             d3=(X[0]-X[2])**2 + (Y[0]-Y[2])**2
             #print(" triangulate d1 1",sqrt(d1),sqrt(d2),sqrt(d3),sqrt(ddiagnol))
-            if (d1+d2+d3)<(3.*ddiagnol) :
+            if (d1+d2+d3)<(6.*ddiagnol) :
                 #print(" %f+%f+%f less than %f"%(sqrt(d1),sqrt(d2),sqrt(d3),sqrt(ddiagnol)))
                 #self.triwater[icoast]=N
                 #triwatersn.append(ii)
@@ -213,26 +228,44 @@ def buildmesh(meshestobuild, meshesfinished):
             return True
 
 
-def array_queue(ncfilename):
+def array_queue(ncfilename,ModelType):
     # set netcdf file name
     # open netcdf file
     # ncfilename='/media/tom/MyBookAllLinux/NOSnetcdf/201902/nos.cbofs.regulargrid.20190201.t00z.n001.nc'
     nc=Dataset(ncfilename)
 
-    # Read only, lon, lat, mask
-    lon = nc.variables["Longitude"][:]
-    lat = nc.variables["Latitude"][:]
-    mask= nc.variables["mask"][:]
+    if ModelType=="ROMS_REGULAR":
+        # Read only, lon, lat, mask
+        lon = nc.variables["Longitude"][:]
+        lat = nc.variables["Latitude"][:]
+        mask= nc.variables["mask"][:]
+        xmesh=xyarray(lon,lat,mask,'U',ModelType)
+        ymesh=xyarray(lon,lat,mask,'V',ModelType)
+        amesh=xyarray(lon,lat,mask,'ANGLE',ModelType)
+        wmesh=xyarray(lon,lat,mask,'W',ModelType)
+        print(" ROMS_REGULAR lon, lat shapes ",lon.shape,lat.shape)
+    elif ModelType=="ROMS_FIELDS":
+        lon_u = nc.variables["lon_u"][:]
+        lat_u = nc.variables["lat_u"][:]
+        mask_u = nc.variables["mask_u"][:]
+        xmesh=xyarray(lon_u,lat_u,mask_u,'U',ModelType)
+        lon_v = nc.variables["lon_v"][:]
+        lat_v = nc.variables["lat_v"][:]
+        mask_v = nc.variables["mask_v"][:]
+        ymesh=xyarray(lon_v,lat_v,mask_v,'V',ModelType)
+        lon_rho = nc.variables["lon_rho"][:]
+        lat_rho = nc.variables["lat_rho"][:]
+        mask_rho = nc.variables["mask_rho"][:]
+        amesh=xyarray(lon_rho,lat_rho,mask_rho,'ANGLE',ModelType)
+        wmesh=xyarray(lon_rho,lat_rho,mask_rho,'W',ModelType)
+        print(" ROMS_FIELDS lon_u, lon_v shapes ",lon_u.shape,lon_v.shape)
+
     nc.close()
-    print(" lon, lat shapes ",lon.shape,lat.shape)
- 
+
     # run mask_fix
     # do processes to reshape self.lon self.lat  self.nodes
     # triangulate  add self. tri, a,b,c
     timefirst=time.time()
-    xmesh=xyarray(lon,lat,mask,'U')
-    ymesh=xyarray(lon,lat,mask,'V')
-    amesh=xyarray(lon,lat,mask,'ANGLE')
 
     # Add the data constructs to the Queue meshestobuild
     meshestobuild=Queue()
@@ -242,10 +275,11 @@ def array_queue(ncfilename):
     meshestobuild.put(xmesh)
     meshestobuild.put(ymesh)
     meshestobuild.put(amesh)
+    meshestobuild.put(wmesh)
 
     print(" queue empty?",queue.Empty)
 
-    number_of_processes = 3
+    number_of_processes = 4
 
     # creating processes
     # Step through the queue pulling out number_of_processes instances:
@@ -255,7 +289,7 @@ def array_queue(ncfilename):
         p = Process(target=buildmesh, args=(meshestobuild, meshesfinished))
         processes.append(p)
         p.start()
-        print("w ",w)
+        print("process started ",w)
 
     for p in processes:
         #p.start()
@@ -282,11 +316,13 @@ def array_queue(ncfilename):
             ymesh = MM
         elif MM.DataType == 'ANGLE':
             amesh = MM
+        elif MM.DataType == 'W':
+            wmesh = MM
         else:
             M3 = MM
     
     print("end",time.time()-timefirst)
-    return xmesh,ymesh,amesh
+    return xmesh,ymesh,amesh,wmesh
 
 # Conclusion:
 #   The p.join only does harm.
@@ -298,6 +334,15 @@ def array_queue(ncfilename):
 if __name__ == '__main__':
 
     ncfilename='/media/tom/MyBookAllLinux/NOSnetcdf/201902/nos.cbofs.regulargrid.20190201.t00z.n001.nc'
+    ncfilename='/media/tom/MyBookAllLinux/NOSnetcdf/201905/nos.cbofs.fields.20190513.t18z.n005.nc'
+    
+    xmesh,ymesh,amesh,wmesh=array_queue(ncfilename,"ROMS_FIELDS")
+    
+    import matplotlib.pyplot as plt
+    import mesh_graphics3 as MG      # Bunch of commented out test plots
+    MG.plot_initialize()
+    MG.plot_mesh(xmesh,ymesh)
+    
+    #p,pcolors,numparticles = MG.plot_mesh_pick_line2(xmesh,100)
 
-    xmesh,ymesh,amesh=array_queue(ncfilename)
 

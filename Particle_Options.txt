@@ -1,13 +1,13 @@
 #DEBUG 
 True
-#s_rho
-0
-#ModelType
-ROMS_REGULAR
+#s_rho 0=top:Regular  19=top:Fields
+19
+#ModelType  ROMS_REGULAR or ROMS_FIELDS
+ROMS_FIELDS
 #date_start
-2019,2,1,1,0
+2019,5,12,1,0
 #date_end
-2019,2,7,12,0
+2019,5,14,12,0
 #dt
 120.
 #dpsave
@@ -17,13 +17,13 @@ ROMS_REGULAR
 #ByHand   
 False
 #lonlatbox
--76.55,36.8,-75.9,39.4
+-76.5,37.8,-76.0,38.8
 #lonlatgraphicbox
--76.6,36.2,-75.6,39.6
+-76.7,37.6,-75.8,39.4
 #nxny
-100,200
+40,80
 #GRAPHrecord
-False
+True
 
     #lonlatbox=(-76.04,36.95,-76.005,37.15)  # Just inside Mouth slender tall
     #lonlatbox=(-76.20,36.95,-76.005,37.15)  # Just inside Mouth big box

@@ -94,11 +94,13 @@ class mesh_animate(object):
         Writer = animation.writers['ffmpeg']
         writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
         if xmesh:
-            #plt.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.triwater, color=(.5,.5,1,.5))
-            Coast=np.argwhere(xmesh.mask==10)
-            plt.plot(xmesh.lon[Coast],xmesh.lat[Coast],'k.',markersize=3)
-            #self.ax.set_xlim(-76.6,-75.4)
-            #self.ax.set_ylim(36.4,37.6)
+            if xmesh.ModelType=="ROMS_REGULAR":
+                #plt.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.triwater, color=(.5,.5,1,.5))
+                Coast=np.argwhere(xmesh.mask==10)
+                plt.plot(xmesh.lon[Coast],xmesh.lat[Coast],'k.',markersize=3)
+            elif xmesh.ModelType=="ROMS_FIELDS":
+                plt.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.tri.simplices, color=(.5,.5,1,.5))
+
             self.ax.set_xlim(self.lonlatbox[0],self.lonlatbox[2])
             self.ax.set_ylim(self.lonlatbox[1],self.lonlatbox[3])
         else:

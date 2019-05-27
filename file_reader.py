@@ -49,9 +49,14 @@ def BuildFileList(dirroot,ModelType,datestart,dateend):
     if ModelType=="ROMS_REGULAR" :
     #    filedirectory=("/home/tomg/code/ParticleTracker%d/CRONFILES/%d%d"
     #                   %(datestart.year,datestart.year,datestart.month))
-        filedirectory=("%s/%d%02d"
-                       %(dirroot,datestart.year,datestart.month))
+    #    filedirectory=("%s/%d%02d"
+    #                   %(dirroot,datestart.year,datestart.month))
         namesroot="nos.cbofs.regulargrid."
+    elif ModelType=="ROMS_FIELDS" :
+    #    filedirectory=("%s/%d%02d"
+    #                   %(dirroot,datestart.year,datestart.month))
+        namesroot="nos.cbofs.fields."
+        
 
     deltime=dateend-datestart
     print(deltime.days, deltime.seconds)
@@ -81,38 +86,48 @@ def BuildFileName(dirroot,namesroot,dn):
     filedirectory=("%s/%d%02d"%(dirroot,dn.year,dn.month))
     return filedirectory, filename
 
-def UV24(filedirectories,filenames,fileindex,mesh,s_rho=0,timedata=0):
+def UV24(filedirectories,filenames,fileindex,xmesh,ymesh,s_rho=0,timedata=0):
     # U24,V24 = FR.UV24(filedirectories,filenames,fileindex,meshx)
     # open timeindex filenames and append to U,V
     # ROMS_REGULAR
     # uses only one mesh.mask  (could be meshx, meshy in future)
     # timedata could be used to access time dim of ROMSnetcdf, ROMS_REGULAR: 0
     # s_rho selects vertical level of the data, ROMS_REGULAR: 0
-    print ("start UV24")
-    lenti=len(fileindex)
+    print ("start UV24  mesh.ModelType",xmesh.ModelType)
+    lentime=len(fileindex)
     #lenarray=int(np.sum(mesh.mask)+.001)
-    lenarray=len(mesh.mask[mesh.mask>0])
-    print('lenarray',lenarray)
-    Coast=np.argwhere(mesh.mask>5)
-    print("Coast",Coast.shape)
+    lenarrayx=len(xmesh.mask[xmesh.mask>0])
+    print('lenarray x',lenarrayx)
+    Coastx=np.argwhere(xmesh.mask>5)
+    print("Coastx",Coastx.shape)
+    lenarrayy=len(ymesh.mask[ymesh.mask>0])
+    print('lenarray y',lenarrayy)
+    Coasty=np.argwhere(ymesh.mask>5)
+    print("Coasty",Coasty.shape)
 
-    U24=np.zeros((lenti,lenarray))
-    V24=np.zeros((lenti,lenarray))
-    Time24=np.zeros(lenti)
+    U24=np.zeros((lentime,lenarrayx))
+    V24=np.zeros((lentime,lenarrayy))
+    Time24=np.zeros(lentime)
     it=0
     for itime in fileindex:
         nclfilename=os.path.join(filedirectories[itime],filenames[itime])
         #print("opening:",nclfilename)
         ncl=Dataset(nclfilename)
-        speed = ncl.variables["u_eastward"][timedata,s_rho,:,:]
+        if xmesh.ModelType=='ROMS_REGULAR':
+            speed = ncl.variables["u_eastward"][timedata,s_rho,:,:]
+        elif xmesh.ModelType=='ROMS_FIELDS':
+            speed = ncl.variables["u"][timedata,s_rho,:,:]
         #print("speed shape",speed.shape,"mask shape",mesh.mask.shape)
         speed = speed.reshape(speed.shape[0]*speed.shape[1])
-        speed[Coast]=0.0
-        U24[it] = speed[mesh.mask>0]
-        speed = ncl.variables["v_northward"][timedata,s_rho,:,:]
+        speed[Coastx]=0.0
+        U24[it] = speed[xmesh.mask>0]
+        if ymesh.ModelType=='ROMS_REGULAR':
+            speed = ncl.variables["v_northward"][timedata,s_rho,:,:]
+        elif ymesh.ModelType=='ROMS_FIELDS':
+            speed = ncl.variables["v"][timedata,s_rho,:,:]
         speed = speed.reshape(speed.shape[0]*speed.shape[1])
-        speed[Coast]=0.0
-        V24[it] = speed[mesh.mask>0]
+        speed[Coasty]=0.0
+        V24[it] = speed[ymesh.mask>0]
 
         # seconds since 2016-01-01 00:00:00
         timenow=ncl.variables["ocean_time"][timedata]
@@ -126,6 +141,3 @@ def UV24(filedirectories,filenames,fileindex,mesh,s_rho=0,timedata=0):
 
 
 
-
-
-    return U,V,dayhours
