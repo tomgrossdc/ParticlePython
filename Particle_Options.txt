@@ -1,7 +1,7 @@
 #DEBUG 
 True
 #s_rho 0=top:Regular  19=top:Fields
-19
+18
 #ModelType  ROMS_REGULAR or ROMS_FIELDS
 ROMS_FIELDS
 #date_start
