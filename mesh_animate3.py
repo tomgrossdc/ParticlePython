@@ -89,8 +89,11 @@ class mesh_animate(object):
     def run_animation(self,xmesh=False,setinterval=10):
 
         if xmesh:
-            plt.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.triwater, color=(.5,.5,1,.5))
-            #plt.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.tri.simplices, color=(.5,.5,1,.5))
+            #plt.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.triwater, color=(.5,.5,1,.5))
+            if xmesh.ModelType=="ROMS_REGULAR":
+                plt.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.tri.simplices, color=(.5,.5,1,.5))
+            else:
+                plt.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.tri.simplices[xmesh.masksimplices>0], color=(.5,.5,1,.5))
             Coast=np.argwhere(xmesh.mask==10)
             #Coast=np.argwhere(xmesh.mask==0)
             #plt.plot(xmesh.lon[Coast],xmesh.lat[Coast],'k.',markersize=3)
@@ -121,7 +124,7 @@ class mesh_animate(object):
         self.scat.set_offsets(self.particles[current_index])
         datestart=datetime.datetime(2016,1,1,0,0,0)   # ROMS basedate
         datetimep=datestart+datetime.timedelta(days=self.timep[current_index])
-        self.ax.set_title("date time {0} {1}".format(datetimep.date(), datetimep.time()))
+        self.ax.set_title("FieldsB2 time {0} {1}".format(datetimep.date(), datetimep.time()))
 
 if __name__ == '__main__':
 # mesh_animate(n_particles=20,n_time=250)

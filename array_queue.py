@@ -24,7 +24,7 @@ import multiprocessing as mp
 def Get_Mask_Points(filename):
     file1=open(filename,"r")
     allfile=file1.read()
-    print(allfile)
+    #print(allfile)
     lines=allfile.split('\n')
     lenPP=len(lines)
     PP = np.ones((lenPP,2),'float')
@@ -193,8 +193,12 @@ class xyarray(object):
                     #print("bad triangle",i)
                     masksimplices[i]=-1
 
-            self.tri.simplices=self.tri.simplices[masksimplices>0]
-            print("***",self.DataType,"  Cleared out simplices ",len(self.tri.simplices))
+
+            #self.tri.simplices=self.tri.simplices[masksimplices>0]
+            self.masksimplices=masksimplices
+
+
+            print("***",self.DataType,"  mask for simplices ",len(self.tri.simplices))
             #fig,ax = plt.subplots()
             #ax.set_aspect('equal')
             #ax.triplot(self.nodes[:,0], self.nodes[:,1], self.tri.simplices, color='b')

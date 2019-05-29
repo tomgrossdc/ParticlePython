@@ -1,13 +1,13 @@
 #DEBUG 
 True
 #s_rho 0=top:Regular  19=top:Fields
-18
+19
 #ModelType  ROMS_REGULAR or ROMS_FIELDS
 ROMS_FIELDS
 #date_start
-2019,5,12,1,0
+2019,5,23,7,0
 #date_end
-2019,5,13,12,0
+2019,5,25,19,0
 #dt
 120.
 #dpsave
@@ -16,14 +16,14 @@ ROMS_FIELDS
 /media/tom/MyBookAllLinux/NOSnetcdf
 #ByHand   
 False
-#lonlatbox
--75.54,36.60,-75.505,36.66
+#lonlatbox Really Big Box from Mouth to Potomac
+-76.55,36.8,-75.9,39.2
 #lonlatgraphicbox
--75.8,36.0,-75.0,37.6
+-76.8,36.5,-75.8,39.5
 #nxny
-10,30
+25,50
 #GRAPHrecord
-False
+True
 
     #lonlatbox=(-76.04,36.95,-76.005,37.15)  # Just inside Mouth slender tall
     #lonlatbox=(-76.20,36.95,-76.005,37.15)  # Just inside Mouth big box
@@ -41,9 +41,18 @@ False
 -76.5,37.8,-76.0,38.8
 #lonlatgraphicbox
 -76.7,37.6,-75.8,39.4
+
+#lonlatbox Really Big Box from Mouth to Potomac
+-76.55,36.8,-75.9,39.2
+#lonlatgraphicbox
+-76.8,36.5,-75.8,39.5
+
 #lonlatbox small tall box inside mouth
 -76.04,36.95,-76.005,37.15
 #lonlatgraphicbox
 -76.6,36.6,-75.8,37.6
 
--75.54,36.95,-75.505,37.15
+#lonlatbox big half bay Near Potomac Mouth
+-76.5,37.65,-76.0,38.5
+#lonlatgraphicbox
+-76.7,36.8,-75.8,38.6

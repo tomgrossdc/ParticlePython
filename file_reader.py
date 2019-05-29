@@ -7,7 +7,7 @@ import os, sys
 from netCDF4 import Dataset
 
 def ReadOptions():
-    filename="/home/tom/code/ThreadParticle/Git20190512/ParticlePython/Particle_Options.txt"
+    filename="/home/tom/code/ThreadParticle/Git20190512/FieldsB2/Particle_Options.txt"
     file1 = open(filename,"r")
     # all data is returned as text so many conversions needed
     file1.readline()  # DEBUG

@@ -70,6 +70,11 @@ def update_particles(dt,p,xmesh,ymesh,amesh,U24,V24,itime0,itime1,timefrac):
         ptx=ptrix[ii]
         pty=ptriy[ii]
         pta=ptria[ii]
+        if xmesh.ModelType=="ROMS_FIELDS":
+            if xmesh.masksimplices[ptx]==-1: ptx=-1
+            if ymesh.masksimplices[pty]==-1: pty=-1
+            if amesh.masksimplices[pta]==-1: pta=-1
+        
         if ptx>len(xmesh.a):
             ptx=-1
         if pty>len(ymesh.a):
@@ -128,8 +133,8 @@ def update_particles(dt,p,xmesh,ymesh,amesh,U24,V24,itime0,itime1,timefrac):
             # Beached particle test, move them out off the Earth
             # Beached particle will have ptx=-1
             if (abs(Ur)+abs(Vr))<.00001 :
-                print("move out of space",ii,p[ii])
-                p[ii]=(-75.9,37.2)
+                #print("move out of space",ii,p[ii])
+                p[ii]=(-75.9+float(ii)/300.,36.07)
         else:
             Up=0.0
             Vp=0.0    # outside grid, no triangle, beached
