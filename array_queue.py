@@ -21,6 +21,27 @@ from multiprocessing import Lock, Process, Queue, current_process
 import queue
 import multiprocessing as mp
 
+def Get_Mask_Points(filename):
+    file1=open(filename,"r")
+    allfile=file1.read()
+    print(allfile)
+    lines=allfile.split('\n')
+    lenPP=len(lines)
+    PP = np.ones((lenPP,2),'float')
+    for ii in range(lenPP):
+        #print("lines[",ii,"]=",lines[ii])
+        if lines[ii]:
+            PP[ii]=[float(i) for i in lines[ii][:-1].split(',')]
+            #print('PP[',ii,']=',PP[ii])
+        else:
+            PP=PP[0:ii]
+            break
+        
+    Plon=PP[:,0]
+    Plat=PP[:,1]
+    lenPP=len(Plat)
+    file1.close()    
+    return PP,lenPP,Plon,Plat
 
 # create mesh objects with self.lon, lat, mask
 class xyarray(object):
@@ -147,8 +168,43 @@ class xyarray(object):
     # call Delaunay triangulation to return
     # self.elements = [node1, node2, node3]
     # self.adjacent = [element1, element2, element3]
-        self.tri = Delaunay(self.nodes)
 
+        if self.ModelType=="ROMS_FIELDS":
+            #Read in file of outside of grid points
+            filename="LatLonMaskPoints.txt"
+            PP,lenPP,Plon,Plat = Get_Mask_Points(filename)
+            #Remove all triangles containing those points from tri.simplices
+            self.x_=np.append(self.x_,Plon)
+            self.y_=np.append(self.y_,Plat)
+            self.angle = 0.0 * self.x_
+            self.nodes = np.transpose(np.array([self.x_, self.y_]))
+    
+            self.tri = Delaunay(self.nodes)
+            print("***",self.DataType,"First Delaunay ",len(self.tri.simplices))
+
+            maxp=len(self.y_)-lenPP
+            simplicesmasked0=self.tri.simplices[self.tri.simplices[:,0]<maxp]
+
+            masksimplices = np.ones(len(self.tri.simplices),'int')
+            for i in range(len(self.tri.simplices)):
+                if (self.tri.simplices[i,0]<maxp and self.tri.simplices[i,1]<maxp and self.tri.simplices[i,2]<maxp) :
+                    masksimplices[i]=i
+                else:
+                    #print("bad triangle",i)
+                    masksimplices[i]=-1
+
+            self.tri.simplices=self.tri.simplices[masksimplices>0]
+            print("***",self.DataType,"  Cleared out simplices ",len(self.tri.simplices))
+            #fig,ax = plt.subplots()
+            #ax.set_aspect('equal')
+            #ax.triplot(self.nodes[:,0], self.nodes[:,1], self.tri.simplices, color='b')
+            #plt.show()
+
+        else:
+            self.tri = Delaunay(self.nodes)
+
+            
+            
     #def makefactors(self):
     # Calculate the linear interpolation factors
         if DEBUG : print ("makefactors",self.ModelType)

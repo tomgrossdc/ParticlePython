@@ -7,7 +7,7 @@ ROMS_FIELDS
 #date_start
 2019,5,12,1,0
 #date_end
-2019,5,14,12,0
+2019,5,13,12,0
 #dt
 120.
 #dpsave
@@ -17,13 +17,13 @@ ROMS_FIELDS
 #ByHand   
 False
 #lonlatbox
--76.5,37.8,-76.0,38.8
+-75.54,36.60,-75.505,36.66
 #lonlatgraphicbox
--76.7,37.6,-75.8,39.4
+-75.8,36.0,-75.0,37.6
 #nxny
-40,80
+10,30
 #GRAPHrecord
-True
+False
 
     #lonlatbox=(-76.04,36.95,-76.005,37.15)  # Just inside Mouth slender tall
     #lonlatbox=(-76.20,36.95,-76.005,37.15)  # Just inside Mouth big box
@@ -36,3 +36,14 @@ True
     #lonlatgraphicbox=(-76.6,36.2,-75.6,37.6)
     #lonlatbox=(-76.55,36.8,-75.9,39.2)    # Really Big Box from Mouth to Potomac
     #lonlatgraphicbox=(-76.8,36.2,-75.8,39.6)
+
+#lonlatbox big half bay over mouth
+-76.5,37.8,-76.0,38.8
+#lonlatgraphicbox
+-76.7,37.6,-75.8,39.4
+#lonlatbox small tall box inside mouth
+-76.04,36.95,-76.005,37.15
+#lonlatgraphicbox
+-76.6,36.6,-75.8,37.6
+
+-75.54,36.95,-75.505,37.15

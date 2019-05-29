@@ -60,16 +60,28 @@ def update_particles(dt,p,xmesh,ymesh,amesh,U24,V24,itime0,itime1,timefrac):
     ptrix = xmesh.tri.find_simplex(p)  # find all tri at once
     ptriy = ymesh.tri.find_simplex(p)  # find all tri at once
     ptria = amesh.tri.find_simplex(p)  # find all tri at once
-    #print('shape p',np.shape(p),p)
-    #print('ptri',np.shape(ptri),ptri)
+    #print('shape p',np.shape(p))
+    #print('ptrix',np.shape(ptrix),ptrix)
+    #print('ptriy',np.shape(ptriy),ptriy)
+    #print('ptria',np.shape(ptria),ptria)
+
     ii=0
     for pt in ptrix:
         ptx=ptrix[ii]
         pty=ptriy[ii]
         pta=ptria[ii]
+        if ptx>len(xmesh.a):
+            ptx=-1
+        if pty>len(ymesh.a):
+            #print("ii,pty  ",ii,pty,"\n ptriy",ptriy)
+            pty=-1
+        if pta>len(amesh.a):
+            #print("ii,pta  ",ii,pta,"\n ptriy",ptria)
+            ptx=-1
+            
         #print("pt ",pt)
         #pt=ptri[ii]  # triangle p[ii,0,1] is inside of
-        if ptx>=0 and pty>=0 :    # inside grid
+        if (ptx>=0 and pty>=0) :    # inside grid
             f0=xmesh.a[pt,0]*p[ii,0] + xmesh.b[pt,0]*p[ii,1] +xmesh.c[pt,0]
             f1=xmesh.a[pt,1]*p[ii,0] + xmesh.b[pt,1]*p[ii,1] +xmesh.c[pt,1]
             f2=xmesh.a[pt,2]*p[ii,0] + xmesh.b[pt,2]*p[ii,1] +xmesh.c[pt,2]
@@ -116,10 +128,13 @@ def update_particles(dt,p,xmesh,ymesh,amesh,U24,V24,itime0,itime1,timefrac):
             # Beached particle test, move them out off the Earth
             # Beached particle will have ptx=-1
             if (abs(Ur)+abs(Vr))<.00001 :
-                p[ii]=(366.,188.)
+                print("move out of space",ii,p[ii])
+                p[ii]=(-75.9,37.2)
         else:
             Up=0.0
             Vp=0.0    # outside grid, no triangle, beached
+            p[ii]=(-75.8+float(ii)/300.,36.05)
+            #p[ii]=(-76.3+float(ii)/300.,37.2)
 
         ii+=1
     return
