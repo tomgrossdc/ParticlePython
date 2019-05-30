@@ -91,7 +91,9 @@ class mesh_animate(object):
         if xmesh:
             #plt.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.triwater, color=(.5,.5,1,.5))
             if xmesh.ModelType=="ROMS_REGULAR":
-                plt.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.tri.simplices, color=(.5,.5,1,.5))
+                #plt.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.tri.simplices, color=(.5,.5,1,.5))
+                Coast=np.argwhere(xmesh.mask==10)
+                plt.plot(xmesh.lon[Coast],xmesh.lat[Coast],'k.',markersize=3)
             else:
                 plt.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.tri.simplices[xmesh.masksimplices>0], color=(.5,.5,1,.5))
             Coast=np.argwhere(xmesh.mask==10)
@@ -99,12 +101,15 @@ class mesh_animate(object):
             #plt.plot(xmesh.lon[Coast],xmesh.lat[Coast],'k.',markersize=3)
             self.ax.set_xlim(self.lonlatbox[0],self.lonlatbox[2])
             self.ax.set_ylim(self.lonlatbox[1],self.lonlatbox[3])
+            self.ModelType=xmesh.ModelType
+
         else:
             self.ax.set_xlim(np.min(self.particles[:,:,0]),np.max(self.particles[:,:,0]))
             self.ax.set_ylim(np.min(self.particles[:,:,1]),np.max(self.particles[:,:,1]))
-        
-        plt.title("time today{0}".format((time.time())))
+            self.ModelType="  *  "
+            
         # Construct the scatter which we will update during animation
+        plt.title("{1} time today{0}".format((time.time()),self.ModelType))
 
         self.scat = self.ax.scatter(self.particles[0][:, 0], self.particles[0][:, 1],
                   s=10, lw=0.5, facecolors=self.colorspp)
@@ -124,7 +129,7 @@ class mesh_animate(object):
         self.scat.set_offsets(self.particles[current_index])
         datestart=datetime.datetime(2016,1,1,0,0,0)   # ROMS basedate
         datetimep=datestart+datetime.timedelta(days=self.timep[current_index])
-        self.ax.set_title("FieldsB2 time {0} {1}".format(datetimep.date(), datetimep.time()))
+        self.ax.set_title("{2}   {0} {1}".format(datetimep.date(), datetimep.time(),self.ModelType))
 
 if __name__ == '__main__':
 # mesh_animate(n_particles=20,n_time=250)

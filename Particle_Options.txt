@@ -1,7 +1,7 @@
 #DEBUG 
 True
 #s_rho 0=top:Regular  19=top:Fields
-19
+17
 #ModelType  ROMS_REGULAR or ROMS_FIELDS
 ROMS_FIELDS
 #date_start
@@ -21,9 +21,9 @@ False
 #lonlatgraphicbox
 -76.8,36.5,-75.8,39.5
 #nxny
-25,50
+100,20
 #GRAPHrecord
-True
+False
 
     #lonlatbox=(-76.04,36.95,-76.005,37.15)  # Just inside Mouth slender tall
     #lonlatbox=(-76.20,36.95,-76.005,37.15)  # Just inside Mouth big box

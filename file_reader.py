@@ -36,7 +36,9 @@ def ReadOptions():
     nxny=[int(i) for i in file1.readline()[:-1].split(',')]
     file1.readline()  # 
     GRAPHrecord= bool(file1.readline()[:-1]=='True')
-    
+    if ModelType=="ROMS_REGULAR" and s_rho>3 : s_rho=0
+    if ModelType=="ROMS_FIELDS" and s_rho==0 : s_rho=19
+
     file1.close()
     return DEBUG,s_rho,ModelType,date_start,date_end,dt,dpsave,dirroot,ByHand,lonlatbox,lonlatgraphicbox,nxny,GRAPHrecord
 

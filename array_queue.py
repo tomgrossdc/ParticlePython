@@ -70,25 +70,26 @@ class xyarray(object):
         if self.ModelType == 'ROMS_REGULAR':
             self.mask_fix2()
 
-        # Inefficient i,j differences
-        #self.mask_fix()
-
         # No coast locations at all
-        if self.ModelType == 'ROMS_FIELDS':
+        elif self.ModelType == 'ROMS_FIELDS':
             self.mask = self.mask.reshape(self.mask.shape[0]*self.mask.shape[1])
             #self.mask=np.ones(self.mask.shape)
             
         self.lon = self.lon.reshape(self.lon.shape[0]*self.lon.shape[1])
         self.lat = self.lat.reshape(self.lat.shape[0]*self.lat.shape[1])
-        print("shapes ",self.lat.shape,"mask",np.shape(self.mask))
+        print("shapes lat",self.lat.shape," mask",np.shape(self.mask))
         self.x_ = self.lon[self.mask>0]
         self.y_ = self.lat[self.mask>0]
         self.angle = 0.0 * self.lon[self.mask>0]
         self.nodes = np.transpose(np.array([self.x_, self.y_]))
         self.range = .2
-        print("end of reshape_mesh",np.shape(self.nodes))        
+        print("end of reshape_mesh nodes",np.shape(self.nodes))        
     
     def mask_fix2(self):
+        # ROMS_REGULAR method
+        # find coast points by finding sharp gradients in mask array
+        # Add masked points back to array, designate with value 10
+        # Assign zero velocity later on
         print(" Start mask_fix2 shape", self.mask.shape,self.DataType,self.ModelType)
         timefirst=time.time()
         maskfix=self.mask
@@ -107,53 +108,6 @@ class xyarray(object):
         
         self.mask = maskfix
         print (" end mask_fix2",time.time()-timefirst,self.mask.shape )
-
-
-    def mask_fix(self):
-        print(" Start mask_fix shape", self.mask.shape,self.DataType,self.ModelType)
-        timefirst=time.time()
-        maskfix=np.zeros(self.mask.shape)
-        # experiments with masking
-        # sum nine mask points around a point
-        # if ==0 and sum>0 it is a coast point set to 10.
-        # else keep as is.
-        #  massive problems with trying to equate a scratch array to self.mask
-        # caused infinite sums and worse.
-        # Also indexing was wierd.  [j-1:j+2] seems to sums j-1 to j+1 wierd
-        #
-        #iijj=0
-        sumij=1.
-        for i in range(1,(self.mask.shape[0]-1) ):
-            #march across the columns in x,i direction
-            #print(" 693 ",i,iijj,sumij)
-            sumij0=0.
-            sumij1=0.
-            sumij2=0.
-            for j in range(1,(self.mask.shape[1]-1) ):
-                # crawl down the x(i) column from j=0:M  I don't get it
-                sumij0=sumij1
-                sumij1=sumij2
-                sumij2=sum(self.mask[i+1][j-1:j+2])
-                sumij = sumij0+sumij1+sumij2
-                #sumij=sum(self.mask[i-1][j-1:j+2])+sum(self.mask[i][j-1:j+2])+sum(self.mask[i+1][j-1:j+2])
-                if self.mask[i][j]<0.5 and sumij>1.2 :
-                    # point is a masked value adjacent to a non-masked point
-                    #iijj+=1
-                    #print( iijj,i-1,i,i+1,j-1,j,j+1, sumij)
-                    #print("   ",self.mask[i-1][j+1],self.mask[i][j+1],self.mask[i+1][j+1])
-                    #print("   ",self.mask[i-1][j],self.mask[i][j],self.mask[i+1][j+1])
-                    #print("   ",self.mask[i-1][j-1],self.mask[i][j-1],self.mask[i+1][j-1])
-                    maskfix[i][j] = 10.
-                elif self.mask[i][j]<0.5:
-                    maskfix[i][j]=0.0
-                else:
-                    maskfix[i][j]=1.
-
-        #self.maskfix = self.maskfix.reshape(self.mask.shape[0]*self.mask.shape[1])
-        self.mask = maskfix.reshape(self.mask.shape[0]*self.mask.shape[1])
-        # now we have a full maskfix turned 1D with 10 at points on coast
-        # Should still have 1 at interior points
-        print (" end mask_fix",time.time()-timefirst,self.mask.shape )
 
 
 
@@ -183,10 +137,10 @@ class xyarray(object):
             print("***",self.DataType,"First Delaunay ",len(self.tri.simplices))
 
             maxp=len(self.y_)-lenPP
-            simplicesmasked0=self.tri.simplices[self.tri.simplices[:,0]<maxp]
 
             masksimplices = np.ones(len(self.tri.simplices),'int')
             for i in range(len(self.tri.simplices)):
+                # Test three points in triangle[i] for being in PP
                 if (self.tri.simplices[i,0]<maxp and self.tri.simplices[i,1]<maxp and self.tri.simplices[i,2]<maxp) :
                     masksimplices[i]=i
                 else:
@@ -384,10 +338,7 @@ def array_queue(ncfilename,ModelType):
     print("end",time.time()-timefirst)
     return xmesh,ymesh,amesh,wmesh
 
-# Conclusion:
-#   The p.join only does harm.
-#   meshesfinsihed.get() seems to wait for something to appear
-#  If I manually count the number_of_processes then it can work smoothly.
+
 
 # if this array_queue.py is run by itself this IF executes.
 #  If it is included in another mainline this IF should not execute

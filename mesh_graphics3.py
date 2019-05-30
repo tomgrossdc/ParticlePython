@@ -39,23 +39,8 @@ def plot_box_pick(nx,ny,lonlatbox):
 
     return p,pcolors,numparticles        
 
-def plot_mesh_pick_line(xmesh):
-    # in mainline do: 
-    #plot_mesh2(xmesh)
-    #
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    #plot triangle meshes and particle initial points
-    #ax.triplot(xmesh.nodes[:,0], xmesh.nodes[:,1], xmesh.tri.simplices, color='green')
-    ax.plot(xmesh.nodes[:,0], xmesh.nodes[:,1], '.', color='lightblue')
-    line, = ax.plot([np.mean(xmesh.nodes[:,0])],[np.mean(xmesh.nodes[:,1])])
-    linebuilder = PointBuilder(line)
-    plt.show()
-    print ("x,y",linebuilder.xs[-1],linebuilder.ys[-1])
-    p = np.transpose(np.array([linebuilder.xs[1:],linebuilder.ys[1:]]))
-    return p
 
-def plot_mesh_pick_line2(xmesh,numtimes=12):
+def plot_mesh_pick_line(xmesh):
     # in mainline do: 
     #p=plot_mesh_pick_line2(xmesh,numtimes=12)
     # p[numparticles,numtimes,2]
@@ -69,10 +54,7 @@ def plot_mesh_pick_line2(xmesh,numtimes=12):
     plt.show()
     if DEBUG: print ("x,y",linebuilder.xs[-1],linebuilder.ys[-1])
     p = np.transpose(np.array([linebuilder.xs[1:],linebuilder.ys[1:]]))
-# get rid of the time index for this old version of p
-#    pp=np.zeros((np.shape(p)[0],numtimes,2))
-#    for i in range(np.shape(p)[0]):
-#        pp[i,0]=p[i]
+
     numparticles = np.shape(p)[0]
     
     #pcolors is just a 0:6 index for groups of particles used by plotting to pick colors later

@@ -103,6 +103,8 @@ class mesh_animate(object):
 
             self.ax.set_xlim(self.lonlatbox[0],self.lonlatbox[2])
             self.ax.set_ylim(self.lonlatbox[1],self.lonlatbox[3])
+            self.ModelType=xmesh.ModelType
+
         else:
             self.ax.set_xlim(np.min(self.particles[:,:,0]),np.max(self.particles[:,:,0]))
             self.ax.set_ylim(np.min(self.particles[:,:,1]),np.max(self.particles[:,:,1]))
@@ -129,7 +131,7 @@ class mesh_animate(object):
         self.scat.set_offsets(self.particles[current_index])
         datestart=datetime.datetime(2016,1,1,0,0,0)   # ROMS basedate
         datetimep=datestart+datetime.timedelta(days=self.timep[current_index])
-        self.ax.set_title("date time {0} {1}".format(datetimep.date(), datetimep.time()))
+        self.ax.set_title("{2}   {0} {1}".format(datetimep.date(), datetimep.time(),self.ModelType))
 
 
 if __name__ == '__main__':
