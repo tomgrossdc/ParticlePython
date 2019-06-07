@@ -176,6 +176,7 @@ class xyarray(object):
         self.a=np.zeros(NODES.shape)
         self.b=np.zeros(NODES.shape)
         self.c=np.zeros(NODES.shape)
+        zzzz=np.zeros(2)
         for N in NODES:
             #factors for triangle ii
             X=self.nodes[N,0]
@@ -207,6 +208,29 @@ class xyarray(object):
                 icoast+=1
             #else:
             #    print(" triangulate d1 1",sqrt(d1),sqrt(d2),sqrt(d3),sqrt(ddiagnol))
+
+            """ ***** New idea:
+            Test triangle ii  for adjacent triangles. If one is missing, make all abc's for those nodes ==0.0
+            test if the triangle is neighbor of a bad triangle masksimplices[neighbor[0]]==-1
+            do not test -1 values whew.
+            """
+            neighbor=self.tri.neighbors[ii]
+#            if neighbor[0]==-1 : cc=(1,2)
+#            if neighbor[1]==-1 : cc=(0,2)
+#            if neighbor[2]==-1 : cc=(0,1)
+#            if neighbor[0]<0 or neighbor[1]<0 or neighbor[2]<0:
+
+            cc=(-10,-10)
+            if neighbor[0]>-1 and masksimplices[neighbor[0]]==-1 : cc=(1,2)
+            if neighbor[1]>-1 and masksimplices[neighbor[1]]==-1 : cc=(0,2)
+            if neighbor[2]>-1 and masksimplices[neighbor[2]]==-1 : cc=(0,1)
+            if cc[0]>-1:
+                self.a[ii,cc]=zzzz
+                self.b[ii,cc]=zzzz
+                self.c[ii,cc]=zzzz
+           
+
+            
             ii+=1
 
         nrange = range(icoast,NODES.shape[0])

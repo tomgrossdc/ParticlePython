@@ -62,7 +62,7 @@ def BuildFileList(dirroot,ModelType,datestart,dateend):
 
     deltime=dateend-datestart
     print(deltime.days, deltime.seconds)
-    numfiles = int((deltime.days*24*3600+deltime.seconds)/3600 +.5 )
+    numfiles = int((deltime.days*24*3600+deltime.seconds)/3600 +1.5 )
     print("numfiles=%d"%(numfiles))
     del6=datetime.timedelta(hours=1)
     dn=datestart

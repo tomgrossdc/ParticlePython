@@ -5,9 +5,9 @@ True
 #ModelType  ROMS_REGULAR or ROMS_FIELDS
 ROMS_FIELDS
 #date_start
-2019,5,23,7,0
+2019,6,3,1,0
 #date_end
-2019,5,25,19,0
+2019,6,5,23,0
 #dt
 120.
 #dpsave
@@ -16,10 +16,10 @@ ROMS_FIELDS
 /media/tom/MyBookAllLinux/NOSnetcdf
 #ByHand   
 False
-#lonlatbox Really Big Box from Mouth to Potomac
--76.55,36.8,-75.9,39.2
+#lonlatbox big half bay Near Potomac Mouth
+-76.5,37.65,-75.9,38.5
 #lonlatgraphicbox
--76.8,36.5,-75.8,39.5
+-76.7,36.8,-75.8,38.6
 #nxny
 100,20
 #GRAPHrecord
